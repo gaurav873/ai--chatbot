@@ -1,0 +1,74 @@
+# Environment Variables Template for RAG ChatBot
+# Copy this file to .env and fill in your actual values
+
+# =============================================================================
+# REQUIRED: API Keys
+# =============================================================================
+
+# Groq API Key (Required)
+# Get your free API key from: https://console.groq.com/
+GROQ_API_KEY=your_groq_api_key_here
+
+# =============================================================================
+# OPTIONAL: Model Configuration
+# =============================================================================
+
+# Groq Model (Default: llama3-8b-8192)
+# Available models: llama3-8b-8192, llama3-70b-8192, mixtral-8x7b-32768
+GROQ_MODEL=llama3-8b-8192
+
+# Temperature for LLM responses (0.0 = deterministic, 1.0 = creative)
+# Lower values give more focused, document-based answers
+TEMPERATURE=0.1
+
+# =============================================================================
+# OPTIONAL: Text Processing Configuration
+# =============================================================================
+
+# Chunk size for text splitting (characters)
+# Larger chunks = more context, smaller chunks = more precise
+CHUNK_SIZE=1000
+
+# Overlap between chunks (characters)
+# Helps maintain context across chunk boundaries
+CHUNK_OVERLAP=200
+
+# =============================================================================
+# OPTIONAL: Vector Store Configuration
+# =============================================================================
+
+# Embedding model for vector creation
+# Default: sentence-transformers/all-MiniLM-L6-v2 (fast and efficient)
+EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+
+# Number of chunks to retrieve for each question
+# Higher values = more context, but may include irrelevant information
+SEARCH_K=5
+
+# =============================================================================
+# OPTIONAL: Alternative LLM Providers (Uncomment to use)
+# =============================================================================
+
+# OpenAI Configuration
+# OPENAI_API_KEY=your_openai_api_key_here
+# OPENAI_MODEL=gpt-3.5-turbo
+
+# Google Gemini Configuration
+# GOOGLE_API_KEY=your_google_api_key_here
+# GOOGLE_MODEL=gemini-pro
+
+# =============================================================================
+# OPTIONAL: Streamlit Configuration
+# =============================================================================
+
+# Page title and icon
+PAGE_TITLE=RAG ChatBot - Multiple PDF Chat
+PAGE_ICON=📚
+
+# =============================================================================
+# NOTES:
+# =============================================================================
+# 1. Only GROQ_API_KEY is required for basic functionality
+# 2. Other variables have sensible defaults
+# 3. Keep your API keys secure and never commit them to version control
+# 4. The .env file should be in your .gitignore 
