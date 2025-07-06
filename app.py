@@ -9,7 +9,6 @@ from langchain_openai import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from typing import List
-from pydantic.v1 import SecretStr
 from langchain.prompts import PromptTemplate
 from langchain.prompts.chat import (
     ChatPromptTemplate,
@@ -19,9 +18,6 @@ from langchain.prompts.chat import (
 
 # Load environment variables
 load_dotenv()
-
-# Configure page
-st.set_page_config(page_title="Chat with Multiple PDFs", page_icon=":books:")
 
 # Check if GROQ_API_KEY is set
 if not os.getenv("GROQ_API_KEY"):
@@ -136,10 +132,17 @@ def get_conversation_chain(vector_store):
 
     qa_prompt = ChatPromptTemplate.from_messages(messages)
 
+    # Get Groq API key
+    groq_api_key = os.getenv("GROQ_API_KEY")
+    if not groq_api_key:
+        st.error("❌ GROQ_API_KEY not found in environment variables!")
+        st.error("Please set your Groq API key in the Streamlit secrets or environment variables.")
+        return None
+    
     llm = ChatOpenAI(
         model="llama3-8b-8192",
-        api_key=SecretStr(os.getenv("GROQ_API_KEY")),
-        base_url="https://api.groq.com/openai/v1",
+        openai_api_key=groq_api_key,  # Use openai_api_key instead of api_key
+        openai_api_base="https://api.groq.com/openai/v1",  # Use openai_api_base instead of base_url
         temperature=0.1  # Lower temperature for more focused answers
     )
 
@@ -188,6 +191,9 @@ def handle_user_input(user_question):
     st.session_state.chat_history = response['chat_history']
 
 def main():
+    # Configure page - must be the first Streamlit command
+    st.set_page_config(page_title="Chat with Multiple PDFs", page_icon=":books:")
+    
     st.title("📚 RAG ChatBot - Multiple PDF Chat")
     st.markdown("Upload multiple PDF documents and ask questions about their content!")
     
@@ -220,9 +226,12 @@ def main():
                 vector_store = get_vector_store(text_chunks)
                 
                 # Create conversation chain
-                st.session_state.conversation = get_conversation_chain(vector_store)
-                
-                st.success("Documents processed! You can now ask questions.")
+                conversation_chain = get_conversation_chain(vector_store)
+                if conversation_chain is not None:
+                    st.session_state.conversation = conversation_chain
+                    st.success("Documents processed! You can now ask questions.")
+                else:
+                    st.error("Failed to create conversation chain. Please check your API key configuration.")
         
         # Clear button
         if st.button("🗑️ Clear Conversation"):
